@@ -4,15 +4,19 @@ import org.apache.commons.codec.binary.Base32;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import java.net.InetAddress;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+import java.util.Random;
 
 public class Authenticator {
-    public static byte[] decodeSecret32(String secret){
+    public static byte[] decodeSecret32(final String secret){
         Base32 codec32 = new Base32();
         return codec32.decode(secret.toUpperCase());
+    }
+    public static byte[] encodeSecret32(final String phrase){
+        Base32 codec32 = new Base32();
+        return codec32.encode(phrase.getBytes());
     }
     public static byte[] decodeSecret64(String secret){
         return Base64.getDecoder().decode(secret);
@@ -47,5 +51,16 @@ public class Authenticator {
     }
     public static String F32(String secret, int off, String algo) throws Exception{
         return calculateCode(decodeSecret32(secret), (System.currentTimeMillis()/1000/30)+off, algo);
+    }
+    public static byte[] createEncodedPhrase(){
+        String CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        StringBuilder phraseBuilder = new StringBuilder();
+        Random rand = new Random();
+        while(phraseBuilder.length()<24){
+            int index = (int) (rand.nextFloat() * CHARS.length());
+            phraseBuilder.append(CHARS.charAt(index));
+        }
+        final String phrase = phraseBuilder.toString();
+        return encodeSecret32(phrase);
     }
 }

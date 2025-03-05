@@ -7,7 +7,7 @@ import javax.crypto.spec.PBEKeySpec;
 public class Password {
     public static SecretKey toSecretKey(final char[] pwd, final String method) throws Exception{
         final PBEKeySpec keySpec = new PBEKeySpec(pwd);
-        final SecretKeyFactory keyf = SecretKeyFactory.getInstance("PBEWithMD5AndDES");
+        final SecretKeyFactory keyf = SecretKeyFactory.getInstance(method);
         return keyf.generateSecret(keySpec);
     }
 }

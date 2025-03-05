@@ -92,8 +92,8 @@ public class LoginFrame extends JFrame {
     public String getUsername(){
         return this.userField.getText();
     }
-    public String getPWD(){
-        return new String(this.pwdField.getPassword());
+    public char[] getPWD(){
+        return this.pwdField.getPassword();
     }
     public void setClosingOption(WindowListener wl){
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
