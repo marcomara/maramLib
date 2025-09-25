@@ -2,12 +2,12 @@ package it.maram.GUI.Login;
 
 import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
+import it.maram.GUI.GUIUtils;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowListener;
-import java.nio.charset.StandardCharsets;
 
 public class OnlineLoginFrame extends JFrame {
     public enum State{
@@ -102,7 +102,7 @@ public class OnlineLoginFrame extends JFrame {
     }
     public void showFrame(){
         pack();
-        it.maram.GUI.GuiUtils.setCentered(this);
+        GUIUtils.setCentered(this);
         setVisible(true);
     }
     public void setDoneButtonAction(ActionListener al){

@@ -6,6 +6,7 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.time.Instant;
 import java.util.Base64;
 import java.util.Random;
 
@@ -23,8 +24,8 @@ public class Authenticator {
     }
     private static String encodedHex(byte[] digest){
         StringBuilder sb = new StringBuilder();
-        for(int i = 0; i< digest.length; i++){
-            sb.append(Integer.toString((digest[i]&0xFF)+0x100, 16));
+        for (byte b : digest) {
+            sb.append(Integer.toString((b & 0xFF) + 0x100, 16));
         }
         return sb.toString();
     }
@@ -49,8 +50,8 @@ public class Authenticator {
         int totp = (int) (binaryCode % Math.pow(10, 6));
         return String.format("%0" + 6 + "d", totp);
     }
-    public static String F32(String secret, int off, String algo) throws Exception{
-        return calculateCode(decodeSecret32(secret), (System.currentTimeMillis()/1000/30)+off, algo);
+    public static String F32(String secret,long instant, int off, String algo) throws Exception{
+        return calculateCode(decodeSecret32(secret), instant+off, algo);
     }
     public static byte[] createEncodedPhrase(){
         String CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";

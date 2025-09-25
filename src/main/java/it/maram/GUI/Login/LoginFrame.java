@@ -2,6 +2,7 @@ package it.maram.GUI.Login;
 
 import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
+import it.maram.GUI.GUIUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -83,7 +84,7 @@ public class LoginFrame extends JFrame {
     }
     public void showFrame(){
         pack();
-        it.maram.GUI.GuiUtils.setCentered(this);
+        GUIUtils.setCentered(this);
         setVisible(true);
     }
     public void setDoneButtonAction(ActionListener al){

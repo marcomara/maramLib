@@ -1,8 +1,10 @@
 package it.maram.auth.RSA;
 
+import it.maram.logging.InvalidParametersException;
 import it.maram.utils.StringUtils;
 
 import java.io.File;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.security.KeyFactory;
@@ -23,7 +25,9 @@ public class RSAUtils {
         generatePublicFile(cha, ps);
     }
     public static void generatePublicFile(String privateKeyResourceFile, File publicKeyOutputFile) throws Exception{
-        String pks = StringUtils.readAll(RSAUtils.class.getResourceAsStream(privateKeyResourceFile));
+        final InputStream is = RSAUtils.class.getResourceAsStream(privateKeyResourceFile);
+        if(is==null) throw new InvalidParametersException("Resource file not found");
+        final String pks = StringUtils.readAll(is);
         final char[] cha = Base64.getEncoder().encodeToString(convert(load(pks)).getEncoded()).toCharArray();
         PrintStream ps = new PrintStream(publicKeyOutputFile);
         generatePublicFile(cha, ps);
@@ -63,18 +67,21 @@ public class RSAUtils {
         KeyFactory kf = KeyFactory.getInstance("RSA");
         return kf.generatePrivate(spec);
     }
-    public static PublicKey loadPublic(File publicKeyFile) throws Exception{
+    public static PublicKey loadPublicFromEncoded(final byte[] publicKeyBytes) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        final X509EncodedKeySpec spec = new X509EncodedKeySpec(publicKeyBytes);
+        final KeyFactory kf = KeyFactory.getInstance("RSA");
+        return kf.generatePublic(spec);
+    }
+    public static PublicKey loadPublic(final File publicKeyFile) throws Exception{
         final String s = new String(Files.readAllBytes(publicKeyFile.toPath()));
         return loadPublic(s);
     }
-    public static PublicKey loadPublic(String publicKeyString) throws Exception{
+    public static PublicKey loadPublic(final String publicKeyString) throws Exception{
         final String pem = publicKeyString.replace("-----BEGIN PUBLIC KEY-----", "")
                 .replaceAll(System.lineSeparator(), "")
                 .replace("-----END PUBLIC KEY-----", "");
         final byte[] encd = Base64.getMimeDecoder().decode(pem);
-        X509EncodedKeySpec spec = new X509EncodedKeySpec(encd);
-        KeyFactory kf = KeyFactory.getInstance("RSA");
-        return kf.generatePublic(spec);
+        return loadPublicFromEncoded(encd);
     }
     public static PublicKey loadPublic(final byte[] publicKeyData) throws NoSuchAlgorithmException, InvalidKeySpecException {
         final byte[] encd = Base64.getMimeDecoder().decode(publicKeyData);
